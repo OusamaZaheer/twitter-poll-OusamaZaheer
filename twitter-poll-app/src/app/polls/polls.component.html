@@ -1,0 +1,66 @@
+<div class="card">
+  <div class="card-header">Options</div>
+  <ul class="list-group list-group-flush">
+    <div class="card-footer">
+      <button type="button" class="btn btn-primary btn-sm" (click)="newPoll()">
+        New Poll</button>
+      <button type="button" class="btn btn-primary btn-sm" style="margin-left: 10px;" (click)="logout()">
+        Logout</button>
+    </div>
+  </ul>
+</div>
+<div >
+  <h4 class="sub-title" *ngIf="openPolls.length > 0">Open Polls</h4>
+  <div class="row"style="margin-left: 10px;margin-right: 10px;" >
+    <div *ngFor="let poll of openPolls">
+      <div class="card" style="width: 18rem;margin-left: 5px;">
+        <div class="card-header">{{poll.name}}</div>
+        <ul class="list-group list-group-flush">
+          <div *ngFor="let choice of poll.pollChoices">
+            <li class="list-group-item">
+              <div class="radio">
+                <label>
+                  <input type="radio" name="optionsRadios" (click)="vote(choice.id)">
+                  {{choice.description}}
+                </label>
+                <label style="float: right;font-weight: bold;" *ngIf="choice.vote > 0">
+                  Score : {{choice.vote}}
+                </label>
+              </div>
+            </li>
+          </div>
+          <div class="card-footer" *ngIf="poll.user.id == userId">
+            <button type="button" class="btn btn-primary btn-sm" style="margin-left: 10px;" (click)="end(poll)">
+              End</button>
+          </div>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <h4 class="sub-title" *ngIf="closedPolls.length > 0">Closed Polls</h4>
+  <div class="row" style="margin-top: 10px;margin-left: 10px;margin-right: 10px;">
+    <div *ngFor="let poll of closedPolls">
+      <div class="card" style="width: 18rem; margin-left: 5px;">
+        <div class="card-header">{{poll.name}}</div>
+        <ul class="list-group list-group-flush">
+          <div *ngFor="let choice of poll.pollChoices">
+            <li class="list-group-item">
+              <div class="radio">
+                <label>
+                  {{choice.description}}
+                </label>
+                <label style="float: right;font-weight: bold;" *ngIf="choice.vote > 0">
+                  Score : {{choice.vote}}
+                </label>
+              </div>
+            </li>
+          </div>
+          <div class="card-footer">
+            <button type="button" class="btn btn-primary btn-sm" (click)="result(poll)">
+              View Result</button>
+          </div>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
