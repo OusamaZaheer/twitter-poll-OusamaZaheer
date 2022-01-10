@@ -15,4 +15,6 @@ public interface UserService extends UserDetailsService {
 	User findByUserNameAndPassword(String contact, String password) throws UsernameNotFoundException;
 
 	List<User> findAll();
+
+	void remove(int id);
 }
