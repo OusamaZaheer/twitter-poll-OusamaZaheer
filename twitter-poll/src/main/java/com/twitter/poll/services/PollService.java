@@ -5,7 +5,7 @@ import java.util.List;
 import com.twitter.poll.entity.Poll;
 
 public interface PollService {
-	Poll createOrUpdate(Poll poll) throws Exception;
+	Poll create(Poll poll) throws Exception;
 
 	List<Poll> findAll();
 
@@ -18,4 +18,6 @@ public interface PollService {
 	List<Poll> findAllLive();
 
 	List<Poll> findAllNonLive();
+
+	Poll endPoll(int id);
 }

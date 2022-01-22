@@ -40,7 +40,7 @@ export class AddNewPollComponent implements OnInit {
       alert("Add Atleast Two Options To Continue")
       return;
     }
-    this.poll.user['id']=this.httpClientService.getLogedInUserId();
+    this.poll['userId']=this.httpClientService.getLogedInUserId();
     this.httpClientService.postData("poll/add",this.poll).subscribe(
       (data) => {
         this.emitData.next(data);

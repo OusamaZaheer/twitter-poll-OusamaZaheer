@@ -1,34 +1,29 @@
 package com.twitter.poll.entity;
 
-import java.io.Serializable;
+public class PollChoice {
+	public static String CREATE_NEW_POLL_CHOICE = "insert into poll_choice (description, poll_id) values (?,?)";
+	public static String FIND_BY_ID = "select * from poll_choice where id = ?";
+	public static String CAST_VOTE = "UPDATE  poll_choice  SET vote = vote + 1 WHERE id = ? ";
+	public static String FIND_BY_POLL_ID = "select * from poll_choice where poll_id = ?";
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-@Entity
-public class PollChoice implements Serializable {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 
 	private String description;
 
 	private long vote;
 
-	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "poll_id", nullable = false)
-	private Poll poll;
+	private int pollId;
 
 	public PollChoice() {
 		super();
+	}
+
+	public PollChoice(int id, String description, long vote, int pollId) {
+		super();
+		this.id = id;
+		this.description = description;
+		this.vote = vote;
+		this.pollId = pollId;
 	}
 
 	public int getId() {
@@ -55,12 +50,12 @@ public class PollChoice implements Serializable {
 		this.vote = vote;
 	}
 
-	public Poll getPoll() {
-		return poll;
+	public int getPollId() {
+		return pollId;
 	}
 
-	public void setPoll(Poll poll) {
-		this.poll = poll;
+	public void setPollId(int pollId) {
+		this.pollId = pollId;
 	}
 
 	@Override

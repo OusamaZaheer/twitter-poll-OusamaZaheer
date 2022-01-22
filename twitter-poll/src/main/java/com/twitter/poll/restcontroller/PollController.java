@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.twitter.poll.entity.Poll;
-import com.twitter.poll.entity.PollChoice;
 import com.twitter.poll.services.PollService;
 
 @RestController
@@ -29,11 +28,8 @@ public class PollController {
 	@PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> create(@RequestBody Poll poll) throws Exception {
 		try {
-			for (PollChoice pollChoice : poll.getPollChoices()) {
-				pollChoice.setPoll(poll);
-			}
 			poll.setStart(Timestamp.valueOf(LocalDateTime.now()));
-			return new ResponseEntity<Object>(pollService.createOrUpdate(poll), HttpStatus.OK);
+			return new ResponseEntity<Object>(pollService.create(poll), HttpStatus.OK);
 
 		} catch (Exception e) {
 			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.EXPECTATION_FAILED);
@@ -44,11 +40,7 @@ public class PollController {
 	@PostMapping(value = "/end", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> end(@RequestParam int pollId) throws Exception {
 		try {
-			Poll poll = pollService.findById(pollId);
-			poll.setLive(false);
-			poll.setEnd(Timestamp.valueOf(LocalDateTime.now()));
-			return new ResponseEntity<Object>(pollService.createOrUpdate(poll), HttpStatus.OK);
-
+			return new ResponseEntity<Object>(pollService.endPoll(pollId), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.EXPECTATION_FAILED);
 

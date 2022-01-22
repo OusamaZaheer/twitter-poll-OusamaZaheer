@@ -29,7 +29,7 @@
               </div>
             </li>
           </div>
-          <div class="card-footer" *ngIf="poll.user.id == userId">
+          <div class="card-footer" *ngIf="poll.userId == userId">
             <button type="button" class="btn btn-primary btn-sm" style="margin-left: 10px;" (click)="end(poll)">
               End</button>
           </div>

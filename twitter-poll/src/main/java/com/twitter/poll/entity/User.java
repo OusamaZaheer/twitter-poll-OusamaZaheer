@@ -1,38 +1,14 @@
 package com.twitter.poll.entity;
 
-import java.io.Serializable;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
-import org.apache.tomcat.util.digester.ArrayStack;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+public class User {
+	public static String FIND_BY_USER_NAME = "select * from user where user_name = ? LIMIT 1";
+	public static String FIND_BY_USER_NAME_AND_PASSWORD = "select * from user where user_name = ? and password = ? LIMIT 1";
+	public static String CREATE_NEW_USER = "insert into user (user_name, password) values (?,?)";
+	public static String FIND_ALL = "select * from user";
+	public static String DELETE = "delete from user where user_id = ?";
 
-import lombok.Data;
-
-@Entity
-public class User implements Serializable{
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "USER_ID")
 	private int id;
 
 	@NotNull
@@ -40,13 +16,16 @@ public class User implements Serializable{
 
 	@NotNull
 	private String password;
-	
-//	@ManyToMany
-//    @JoinTable(name = "role_id", joinColumns = { @JoinColumn(name = "USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID") })
-//    private Set<Role> roles;
 
 	public User(@NotNull String userName, @NotNull String password) {
 		super();
+		this.userName = userName;
+		this.password = password;
+	}
+
+	public User(int id, @NotNull String userName, @NotNull String password) {
+		super();
+		this.id = id;
 		this.userName = userName;
 		this.password = password;
 	}
@@ -78,15 +57,5 @@ public class User implements Serializable{
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-
-//	public Set<Role> getRoles() {
-//		return roles;
-//	}
-//
-//	public void setRoles(Set<Role> roles) {
-//		this.roles = roles;
-//	}
-
-	
 
 }

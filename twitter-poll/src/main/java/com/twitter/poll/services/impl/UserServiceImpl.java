@@ -3,46 +3,48 @@ package com.twitter.poll.services.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.twitter.poll.entity.User;
 import com.twitter.poll.enumration.RoleValue;
-import com.twitter.poll.repo.UserRepository;
+import com.twitter.poll.mapper.ObjectMapper;
 import com.twitter.poll.services.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-	private UserRepository userRepository;
+	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository) {
+	public UserServiceImpl(JdbcTemplate jdbcTemplate) {
 		super();
-		this.userRepository = userRepository;
+		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	@Override
 	public User createOrUpdate(User user) throws Exception {
-		User vUser = userRepository.findByUserName(user.getUserName());
+		User vUser = findByUserName(user.getUserName());
 		if (vUser != null) {
 			throw new Exception("User Already Exist");
 		}
-		return userRepository.save(user);
-
+		int result = jdbcTemplate.update(User.CREATE_NEW_USER, user.getUserName(), user.getPassword());
+		return result == 1 ? findByUserName(user.getUserName()) : null;
 	}
 
 	@Override
-	public User findByUserName(String contact) throws UsernameNotFoundException {
-		User user = userRepository.findByUserName(contact);
-		if (user == null) {
-			throw new UsernameNotFoundException("User " + contact + " Not Found");
+	public User findByUserName(String contact) {
+		User user = null;
+		List<User> users = jdbcTemplate.query(User.FIND_BY_USER_NAME, ObjectMapper.getInstance().new UserMapper(),
+				contact);
+		if (!users.isEmpty()) {
+			user = users.get(0);
 		}
 
 		return user;
@@ -50,16 +52,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<User> findAll() {
-		List<User> users = new ArrayList<User>();
-		userRepository.findAll().forEach(users::add);
-		return users;
+		return jdbcTemplate.query(User.FIND_ALL, ObjectMapper.getInstance().new UserMapper());
 	}
 
 	@Override
 	@Transactional
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		System.out.println("Loging In User " + username);
-		User user = userRepository.findByUserName(username);
+		User user = findByUserName(username);
 		if (user != null) {
 			System.out.println("Founded User" + username);
 			return new org.springframework.security.core.userdetails.User(user.getUserName(),
@@ -79,9 +79,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User findByUserNameAndPassword(String contact, String password) throws UsernameNotFoundException {
-		User user = userRepository.findByUserNameAndPassword(contact, password);
+		User user = null;
+		List<User> users = jdbcTemplate.query(User.FIND_BY_USER_NAME_AND_PASSWORD,
+				ObjectMapper.getInstance().new UserMapper(), contact, password);
+		if (!users.isEmpty()) {
+			user = users.get(0);
+		}
 		if (user == null) {
-			throw new UsernameNotFoundException("User " + contact + " Not Found");
+			throw new UsernameNotFoundException("User " + contact + " Not Founded With Password");
 		}
 
 		return user;
@@ -89,8 +94,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void remove(int id) {
-		userRepository.deleteById(id);
-
+		jdbcTemplate.update(User.DELETE, id);
 	}
 
 }

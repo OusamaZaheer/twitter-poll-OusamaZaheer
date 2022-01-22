@@ -5,55 +5,45 @@ import java.sql.Timestamp;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
-
-@Entity
-@NamedQueries({
-		@NamedQuery(name = "Poll.findAllLive", query = "Select p From Poll p where p.live=true order by p.start ASC"),
-		@NamedQuery(name = "Poll.findAllNonLive", query = "Select p From Poll p where p.live=false order by p.end ASC") })
 public class Poll implements Serializable {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	public static String CREATE_NEW_POLL = "insert into poll (name, start_date, live, created_by) values (?,?,?,?)";
+	public static String FIND_BY_ID = "select * from poll where id =?";
+	public static String FIND_ALL = "select * from poll";
+	public static String FIND_BY_LIVE_STATUS = "select * from poll where live = ?";
+	public static String FIND_5_LIVE = "select * from poll where live = true order by start_date asc limit 5";
+	public static String FIND_5_OFFLINE = "select * from poll where live = false order by end_date asc limit 5";
+	public static String END_POLL = "UPDATE  poll  SET end_date = ? , live = ?  WHERE id = ? ";
+
 	private int id;
 
 	private String name;
 
-	@Column(name = "start_date")
 	private Timestamp start;
 
-	@Column(name = "end_date")
 	private Timestamp end;
 
-	@Column(name = "live", columnDefinition = "TINYINT(1) default 0")
 	private boolean live;
 
-	@OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<PollChoice> pollChoices;
 
-	@OneToMany(mappedBy = "poll", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<UserPollChoice> userPollChoices;
 
-	@NotNull
-	@ManyToOne
-	@JoinColumn(name = "created_by")
-	private User user;
+	private int userId;
 
 	public Poll(String name, boolean live) {
 		super();
 		this.name = name;
 		this.live = live;
+	}
+
+	public Poll(int id, String name, Timestamp start, Timestamp end, boolean live, int userId) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.start = start;
+		this.end = end;
+		this.live = live;
+		this.userId = userId;
 	}
 
 	public Poll() {
@@ -111,14 +101,6 @@ public class Poll implements Serializable {
 		this.end = end;
 	}
 
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
 	public Set<UserPollChoice> getUserPollChoices() {
 		if (this.userPollChoices == null) {
 			this.userPollChoices = new LinkedHashSet<UserPollChoice>();
@@ -128,6 +110,14 @@ public class Poll implements Serializable {
 
 	public void setUserPollChoices(Set<UserPollChoice> userPollChoices) {
 		this.userPollChoices = userPollChoices;
+	}
+
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 
 }

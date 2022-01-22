@@ -26,6 +26,7 @@ export class PollsComponent implements OnInit {
   populateOpenPolls() {
     this.httpClientService.getData("poll/get-all-by-status?live=true").subscribe(
       (data) => {
+        console.log(data);
         this.openPolls = data;
 
       },

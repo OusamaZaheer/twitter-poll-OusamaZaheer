@@ -30,7 +30,7 @@ public class SecurityNone {
 				user = userService.createOrUpdate(new User(userName, password));
 				return new ResponseEntity<Object>(user, HttpStatus.OK);
 			} catch (Exception e1) {
-				return new ResponseEntity<Object>(e.getMessage(), HttpStatus.EXPECTATION_FAILED);
+				return new ResponseEntity<Object>(e1.getMessage(), HttpStatus.EXPECTATION_FAILED);
 			}
 		}
 	}

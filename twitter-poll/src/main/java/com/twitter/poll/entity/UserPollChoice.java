@@ -1,66 +1,35 @@
 package com.twitter.poll.entity;
 
-import java.io.Serializable;
-
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-@Entity
-public class UserPollChoice implements Serializable {
-
-	@EmbeddedId
-	private UserPollChoicePK id;
-
-	@NotNull
-	@ManyToOne
-	@JsonIgnore
-	@JoinColumn(name = "poll_id", insertable = false, updatable = false)
-	private Poll poll;
-
-	@NotNull
-	@ManyToOne
-	@JsonIgnore
-	@JoinColumn(name = "user_id", insertable = false, updatable = false)
-	private User user;
+public class UserPollChoice {
+	public static String CREATE_NEW_USER_POLL_CHOICE = "insert into user_poll_choice (poll_id, user_id) values (?,?)";
+	public static String FIND_BY_USERID_AND_POLLID = "select * from user_poll_choice where poll_id = ? and user_id = ?";
+	private int pollId;
+	private int userId;
 
 	public UserPollChoice() {
 		super();
 	}
 
-	public UserPollChoice(@NotNull Poll poll, @NotNull User user) {
+	public UserPollChoice(int pollId, int userId) {
 		super();
-		this.id = new UserPollChoicePK(poll.getId(), user.getId());
-		this.poll = poll;
-		this.user = user;
+		this.pollId = pollId;
+		this.userId = userId;
 	}
 
-	public UserPollChoicePK getId() {
-		return id;
+	public int getPollId() {
+		return pollId;
 	}
 
-	public void setId(UserPollChoicePK id) {
-		this.id = id;
+	public void setPollId(int pollId) {
+		this.pollId = pollId;
 	}
 
-	public User getUser() {
-		return user;
+	public int getUserId() {
+		return userId;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public Poll getPoll() {
-		return poll;
-	}
-
-	public void setPoll(Poll poll) {
-		this.poll = poll;
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 
 }
